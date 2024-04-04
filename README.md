@@ -1,6 +1,6 @@
 # Servodoor-app: RC servo based door control application  
 
-A simple GUI for controlling the petrish dish tapping device.
+A simple Python GUI for controlling a petrish dish tapping device.
 
 ## Installing
 Install using pip 
