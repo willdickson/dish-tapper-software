@@ -1,4 +1,4 @@
-# Servodoor-app: RC servo based door control application  
+# dish-tapper-software 
 
 A simple Python GUI for controlling a petrish dish tapping device.
 
