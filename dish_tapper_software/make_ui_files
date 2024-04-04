@@ -1,0 +1,2 @@
+pyside6-uic channel_form.ui > ui_channel_form.py
+pyside6-uic main_window.ui > ui_main_window.py
