@@ -103,6 +103,15 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
+        self.plotPushButton = QPushButton(self.durationWidget)
+        self.plotPushButton.setObjectName(u"plotPushButton")
+
+        self.horizontalLayout.addWidget(self.plotPushButton)
+
+        self.horizontalSpacer_7 = QSpacerItem(5, 20, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer_7)
+
 
         self.verticalLayout.addWidget(self.durationWidget)
 
@@ -167,6 +176,7 @@ class Ui_MainWindow(object):
         self.hourUnitLabel.setText(QCoreApplication.translate("MainWindow", u"(hr) ", None))
         self.minUnitLabel.setText(QCoreApplication.translate("MainWindow", u"(min)", None))
         self.secUnitLabel.setText(QCoreApplication.translate("MainWindow", u"(sec)", None))
+        self.plotPushButton.setText(QCoreApplication.translate("MainWindow", u"Plot", None))
         self.startStopPushButton.setText(QCoreApplication.translate("MainWindow", u"Start", None))
     # retranslateUi
 

@@ -46,7 +46,7 @@ def pulse_sequence(pulses, pulse_dt=0.01, length=1.0, cutoff_freq=800.0, rate=44
     if cutoff_freq is not None: 
         b, a = signal.butter(4, cutoff_freq, fs=rate)
         for chan in range(num_chan):
-            waveform[:,chan] = signal.filtfilt(b, a, waveform[:,chan])
+            waveform[:,chan] = signal.lfilter(b, a, waveform[:,chan])
     return t, waveform
 
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     pulses = [5,5]
     rate = 44100
 
-    t, seq = pulse_sequence(pulses, pulse_dt=0.005, cutoff_freq=8000.0, rate=rate)
+    t, seq = pulse_sequence(pulses, pulse_dt=0.005, cutoff_freq=100.0, rate=rate)
 
     num_chan = len(pulses)
 

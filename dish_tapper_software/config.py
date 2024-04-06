@@ -22,7 +22,7 @@ amplitude = {
 lowpass = {
         'min'     : 100.0,     # minimum lowpass filter cutoff frequency (Hz)
         'max'     : 20000.0,   # maximum lowpass filter cutoff frequency (Hz)
-        'default' : 800.0,     # default lowpass filter cutoff frequency (Hz)
+        'default' : 400.0,     # default lowpass filter cutoff frequency (Hz)
         'enabled' : True,      # lowpass filter enabled flag
         }
 

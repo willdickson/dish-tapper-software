@@ -3,6 +3,7 @@ import time
 import collections
 import numpy as np
 import sounddevice as sd
+import matplotlib.pyplot as plt
 import importlib.resources as pkg_resourses
 
 from PySide6 import QtCore
@@ -57,6 +58,7 @@ class AppMainWindow(QtWidgets.QMainWindow):
             widget.set_frequency(config.frequency['default'])
             widget.set_amplitude(config.amplitude['default'])
             widget.set_lowpass(config.lowpass['default'])
+            widget.set_lowpass_checked(config.lowpass['enabled'])
 
         self.ui.hrSpinBox.setMinimum(0)
         self.ui.minSpinBox.setMinimum(0)
@@ -69,6 +71,7 @@ class AppMainWindow(QtWidgets.QMainWindow):
 
     def connect_actions(self):
         self.ui.startStopPushButton.clicked.connect(self.on_start_stop_button)
+        self.ui.plotPushButton.clicked.connect(self.on_plot_button)
 
     def on_timer(self):
         now = time.time()
@@ -94,6 +97,21 @@ class AppMainWindow(QtWidgets.QMainWindow):
             self.set_widgets_enabled(True)
             self.stop_audio()
 
+    def on_plot_button(self):
+        self.fig, self.ax = plt.subplots(2,1,num=1)
+        t, seq = self.get_audio_seq()
+        self.ax[0].set_title('Audio Signal')
+        self.ax[0].plot(t, seq[:,0])
+        self.ax[0].grid(True)
+        self.ax[0].set_ylabel('chan 1')
+
+        self.ax[1].plot(t, seq[:,1])
+        self.ax[1].grid(True)
+        self.ax[1].set_ylabel('Channel 1')
+        self.ax[1].set_ylabel('t (sec)')
+        plt.show()
+
+
     def set_start_stop_button_text(self):
         self.ui.startStopPushButton.setText(self.START_STOP_BUTTON_TEXT[self.running])
 
@@ -104,6 +122,14 @@ class AppMainWindow(QtWidgets.QMainWindow):
 
     def start_audio(self):
         sd.stop()
+        sample_rate = config.sequence['sample_rate']
+        t, seq_array = self.get_audio_seq()
+        sd.play(seq_array, sample_rate, loop=True)
+
+    def stop_audio(self):
+        sd.stop()
+
+    def get_audio_seq(self):
         pulse_dt = config.sequence['pulse_dt']
         seq_length = config.sequence['length']
         sample_rate = config.sequence['sample_rate']
@@ -111,7 +137,10 @@ class AppMainWindow(QtWidgets.QMainWindow):
         for name, widget in self.channel_to_widget.items():
             frequency = widget.frequency()
             amplitude = widget.amplitude()
-            lowpass = widget.lowpass()
+            if widget.lowpass_checked():
+                lowpass = widget.lowpass()
+            else:
+                lowpass = None
             max_amplitude = widget.amplitude_maximum()
             t, seq = pulse_utils.pulse_sequence( 
                     [frequency], 
@@ -123,10 +152,7 @@ class AppMainWindow(QtWidgets.QMainWindow):
             seq = seq*self.PULSE_SEQ_MAX_VALUE*relative_amplitude
             seq_list.append(seq)
         seq_array = np.hstack(seq_list)
-        sd.play(seq_array, sample_rate, loop=True)
-
-    def stop_audio(self):
-        sd.stop()
+        return t, seq_array 
 
     @property
     def duration(self):

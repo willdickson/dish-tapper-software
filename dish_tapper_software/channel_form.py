@@ -21,6 +21,9 @@ class ChannelForm(QtWidgets.QWidget):
     def lowpass(self):
         return self.ui.lowpassSpinBox.value()
 
+    def lowpass_checked(self):
+        return self.ui.lowpassCheckBox.isChecked()
+
     def frequency_maximum(self):
         return self.ui.frequencySpinBox.maximum()
 
@@ -68,6 +71,10 @@ class ChannelForm(QtWidgets.QWidget):
 
     def set_lowpass_minimum(self, value):
         self.ui.lowpassSpinBox.setMinimum(value)
+
+    def set_lowpass_checked(self, value):
+        self.ui.lowpassCheckBox.setChecked(value)
+
 
 
 
