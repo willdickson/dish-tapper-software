@@ -1,13 +1,26 @@
 from PySide6 import QtWidgets
+from PySide6 import QtCore
 from .ui_channel_form import Ui_channelFormWidget
 from . import config
 
 class ChannelForm(QtWidgets.QWidget):
 
+    formChanged = QtCore.Signal()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ui = Ui_channelFormWidget()
         self.ui.setupUi(self)
+        self.connect_actions()
+
+    def connect_actions(self):
+        self.ui.amplitudeSpinBox.valueChanged.connect(self.on_value_changed)
+        self.ui.frequencySpinBox.valueChanged.connect(self.on_value_changed)
+        self.ui.lowpassSpinBox.valueChanged.connect(self.on_value_changed)
+        self.ui.lowpassCheckBox.stateChanged.connect(self.on_value_changed)
+
+    def on_value_changed(self, value):
+        self.formChanged.emit()
 
     def label_text(self):
         return self.ui.channelLabel.text()
@@ -20,6 +33,9 @@ class ChannelForm(QtWidgets.QWidget):
 
     def lowpass(self):
         return self.ui.lowpassSpinBox.value()
+
+    def lowpass_step(self):
+        return self.ui.lowpassSpinBox.singleStep()
 
     def lowpass_checked(self):
         return self.ui.lowpassCheckBox.isChecked()
@@ -53,6 +69,9 @@ class ChannelForm(QtWidgets.QWidget):
 
     def set_lowpass(self, value):
         self.ui.lowpassSpinBox.setValue(value)
+
+    def set_lowpass_step(self, value):
+        self.ui.lowpassSpinBox.setSingleStep(value)
 
     def set_frequency_maximum(self, value):
         self.ui.frequencySpinBox.setMaximum(value)

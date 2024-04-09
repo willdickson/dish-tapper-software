@@ -109,7 +109,7 @@ class Ui_channelFormWidget(object):
         self.frequencyLabel.setText(QCoreApplication.translate("channelFormWidget", u"Frequency", None))
         self.frequencyUnitLabel.setText(QCoreApplication.translate("channelFormWidget", u"(Hz)", None))
         self.amplitudeLabel.setText(QCoreApplication.translate("channelFormWidget", u"Amplitude", None))
-        self.amplitudeUnitLabel.setText(QCoreApplication.translate("channelFormWidget", u"(0 - 100)", None))
+        self.amplitudeUnitLabel.setText(QCoreApplication.translate("channelFormWidget", u"(%)", None))
         self.lowpassCheckBox.setText(QCoreApplication.translate("channelFormWidget", u"Lowpass", None))
         self.label_2.setText(QCoreApplication.translate("channelFormWidget", u"(Hz)", None))
     # retranslateUi

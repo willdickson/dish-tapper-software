@@ -22,8 +22,10 @@ class AppMainWindow(QtWidgets.QMainWindow):
             False : 'Start',
             }
 
-    TIMER_DT_MS = 100
     PULSE_SEQ_MAX_VALUE = 1.0
+    TIMER_DT_MS = 10
+    PLOT_DEFAULT_XLIM =  0, 1
+    PLOT_DEFAULT_YLIM = -0.15, 1.15
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,6 +41,12 @@ class AppMainWindow(QtWidgets.QMainWindow):
         self.start_time = 0.0
         self.set_default_values()
         self.connect_actions()
+        self.fig = None
+
+    def closeEvent(self, event):
+        event.accept()
+        if self.fig is not None:
+            plt.close(self.fig)
 
     def check_config(self):
         if not config.sequence['length'] is int:
@@ -59,6 +67,9 @@ class AppMainWindow(QtWidgets.QMainWindow):
             widget.set_amplitude(config.amplitude['default'])
             widget.set_lowpass(config.lowpass['default'])
             widget.set_lowpass_checked(config.lowpass['enabled'])
+            widget.set_lowpass_step(config.lowpass['step'])
+
+            print(widget.lowpass_step())
 
         self.ui.hrSpinBox.setMinimum(0)
         self.ui.minSpinBox.setMinimum(0)
@@ -72,6 +83,11 @@ class AppMainWindow(QtWidgets.QMainWindow):
     def connect_actions(self):
         self.ui.startStopPushButton.clicked.connect(self.on_start_stop_button)
         self.ui.plotPushButton.clicked.connect(self.on_plot_button)
+        for name, widget in self.channel_to_widget.items():
+            widget.formChanged.connect(self.on_form_changed)
+
+    def on_form_changed(self):
+        self.update_plot(create=False)
 
     def on_timer(self):
         now = time.time()
@@ -83,6 +99,7 @@ class AppMainWindow(QtWidgets.QMainWindow):
             self.timer.stop()
             self.running = False
             self.set_start_stop_button_text()
+            self.set_widgets_enabled(True)
 
     def on_start_stop_button(self):
         self.running = not self.running
@@ -98,19 +115,40 @@ class AppMainWindow(QtWidgets.QMainWindow):
             self.stop_audio()
 
     def on_plot_button(self):
-        self.fig, self.ax = plt.subplots(2,1,num=1)
+        self.update_plot()
+
+    def update_plot(self, create=True):
+        if self.fig is None and not create:
+            return
         t, seq = self.get_audio_seq()
-        self.ax[0].set_title('Audio Signal')
-        self.ax[0].plot(t, seq[:,0])
-        self.ax[0].grid(True)
-        self.ax[0].set_ylabel('chan 1')
+        if self.fig is not None:
+            self.lines[0].set_data(t,seq[:,0])
+            self.lines[1].set_data(t,seq[:,1])
+            plt.draw()
+        else: 
+            self.fig, self.ax = plt.subplots(2,1,num=1,sharex=True)
+            self.fig.canvas.mpl_connect('close_event', self.on_fig_close)
+            self.ax[0].set_title('Pulse Signal - 1 second loop')
 
-        self.ax[1].plot(t, seq[:,1])
-        self.ax[1].grid(True)
-        self.ax[1].set_ylabel('Channel 1')
-        self.ax[1].set_ylabel('t (sec)')
-        plt.show()
+            chan_a_line, = self.ax[0].plot(t, seq[:,0])
+            self.ax[0].grid(True)
+            self.ax[0].set_ylabel('chan 1')
+            self.ax[0].set_xlim(*self.PLOT_DEFAULT_XLIM)
+            self.ax[0].set_ylim(*self.PLOT_DEFAULT_YLIM)
+            chan_b_line, = self.ax[1].plot(t, seq[:,1])
+            self.ax[1].grid(True)
+            self.ax[1].set_ylabel('Channel 1')
+            self.ax[1].set_xlabel('t (sec)')
+            self.ax[1].set_xlim(*self.PLOT_DEFAULT_XLIM)
+            self.ax[1].set_ylim(*self.PLOT_DEFAULT_YLIM)
+            plt.ioff()
+            plt.pause(0.01) 
+            self.lines = (chan_a_line, chan_b_line)
 
+    def on_fig_close(self, event):
+        self.fig = None
+        self.ax = None
+        self.lines = None
 
     def set_start_stop_button_text(self):
         self.ui.startStopPushButton.setText(self.START_STOP_BUTTON_TEXT[self.running])

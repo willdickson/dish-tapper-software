@@ -102,7 +102,7 @@
    <item>
     <widget class="QLabel" name="amplitudeUnitLabel">
      <property name="text">
-      <string>(0 - 100)</string>
+      <string>(%)</string>
      </property>
     </widget>
    </item>
