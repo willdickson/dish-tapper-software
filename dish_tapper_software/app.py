@@ -69,8 +69,6 @@ class AppMainWindow(QtWidgets.QMainWindow):
             widget.set_lowpass_checked(config.lowpass['enabled'])
             widget.set_lowpass_step(config.lowpass['step'])
 
-            print(widget.lowpass_step())
-
         self.ui.hrSpinBox.setMinimum(0)
         self.ui.minSpinBox.setMinimum(0)
         self.ui.secSpinBox.setMinimum(0)
