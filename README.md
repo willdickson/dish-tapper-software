@@ -25,6 +25,6 @@ Additional documentation on using poetry can be found
 
 ## GUI images
 
-![connect_tab](images/screenshot2.png)
+![connect_tab](images/screenshot3.png)
 
 
