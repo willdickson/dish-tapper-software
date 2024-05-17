@@ -16,7 +16,7 @@ frequency = {
 amplitude = {
         'min'     : 0,         # minimum allowed amplitude (unitless?)
         'max'     : 100,       # maximum allowed amplitude (unitless?)
-        'default' : 50,        # default amplitude setting (unitless?)
+        'default' : 10,        # default amplitude setting (unitless?)
         }
 
 lowpass = {
